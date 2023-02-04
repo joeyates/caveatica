@@ -34,3 +34,10 @@ export WIFI_PASSPHRASE=...
 mix firmware
 mix firmware.burn
 ```
+
+# Development
+
+## Updating nerves Runtime
+
+The OTP version of the nerves runtime (check the GitHub release page)
+must match the Erlang that is used when building the firmware.
