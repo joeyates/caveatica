@@ -35,6 +35,12 @@ mix firmware
 mix firmware.burn
 ```
 
+# Switching Target
+
+* change .envrc
+* change `@target` in mix.exs
+* run mix deps.get
+
 # Development
 
 ## Updating nerves Runtime
