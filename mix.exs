@@ -2,6 +2,7 @@ defmodule Caveatica.MixProject do
   use Mix.Project
 
   @app :caveatica
+  @target :rpi3
   @version "0.1.0"
 
   def project do
@@ -27,10 +28,10 @@ defmodule Caveatica.MixProject do
   defp deps do
     [
       {:nerves, "~> 1.9.0", runtime: false},
-      {:nerves_time, "~> 0.4.2", targets: :rpi3},
-      {:nerves_runtime, "~> 0.13.0", targets: :rpi3},
-      {:nerves_pack, "~> 0.7.0", targets: :rpi3},
-      {:nerves_system_rpi3, "~> 1.13", runtime: false, targets: :rpi3},
+      {:nerves_time, "~> 0.4.2", targets: @target},
+      {:nerves_runtime, "~> 0.13.0", targets: @target},
+      {:nerves_pack, "~> 0.7.0", targets: @target},
+      {:nerves_system_rpi3, "~> 1.22", runtime: false, targets: :rpi3},
       {:ring_logger, "~> 0.8.1"},
       {:toolshed, "~> 0.2.13"}
     ]
