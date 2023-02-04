@@ -3,16 +3,7 @@ defmodule Caveatica do
   Documentation for `Caveatica`.
   """
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Caveatica.hello()
-      :world
-
-  """
   def hello do
-    :world
+    IO.puts("Hello")
   end
 end
