@@ -36,8 +36,8 @@
 -heart -env HEART_BEAT_TIMEOUT 30
 
 # Force the VM to use port 5000 for distributed Erlang connections
--inet_dist_listen_min 5000
--inet_dist_listen_max 5000
+-kernel inet_dist_listen_min 5000
+-kernel inet_dist_listen_max 5000
 
 ## Start the Elixir shell
 
