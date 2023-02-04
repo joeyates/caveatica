@@ -2,7 +2,8 @@ defmodule Caveatica.MixProject do
   use Mix.Project
 
   @app :caveatica
-  @target :rpi3
+  # Target must match MIX_TARGET
+  @target :rpi3 # :rpi3|:rpi4
   @version "0.1.0"
 
   def project do
