@@ -25,6 +25,14 @@ mix archive.install hex nerves_bootstrap
 mix deps.get
 ```
 
+## SSH Access
+
+```sh
+ssh-keygen -t ed25519 -b 4096 -N "" -C "Caveatica tunnel" -f "priv/id_ed25519"
+```
+
+Copy the public key to the Caveatica public server.
+
 # Build
 
 ```sh
