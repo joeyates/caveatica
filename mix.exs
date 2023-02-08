@@ -28,6 +28,7 @@ defmodule Caveatica.MixProject do
 
   defp deps do
     [
+      {:circuits_gpio, "~> 1.0"},
       {:nerves, "~> 1.9.0", runtime: false},
       {:nerves_time, "~> 0.4.2", targets: @target},
       {:nerves_runtime, "~> 0.13.0", targets: @target},
