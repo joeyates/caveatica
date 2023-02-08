@@ -1,8 +1,15 @@
 # Caveatica
 
-Control a door to a chicken coop.
+Open and shut the door to a chicken coop.
 
-This is a Nerves application.
+This is a Nerves application that runs on a Raspberry Pi
+housed inside the chicken coop.
+
+The Raspberry Pi controls a motor that raises or lowers
+a "portcullis" style door.
+
+The application is controlled by a remote "Caveatica server"
+application.
 
 # Setup
 
