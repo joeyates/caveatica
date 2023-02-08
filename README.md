@@ -17,6 +17,19 @@ With asdf:
 asdf install
 ```
 
+## Create .envrc.private
+
+This project relies on direnv to set environment variables on
+the development machine.
+
+The file `.envrc` lists variables that need to be set.
+
+```
+cp .envrc .envrc.private
+```
+
+Then insert the values that match your setup.
+
 ## Other
 
 ```sh
@@ -33,19 +46,15 @@ ssh-keygen -t ed25519 -b 4096 -N "" -C "Caveatica tunnel" -f "priv/id_ed25519"
 
 Copy the public key to the Caveatica public server.
 
-# Build
+# Prepare SD Card
 
 ```sh
-export MIX_TARGET=rpi3
-export WIFI_SSID=...
-export WIFI_PASSPHRASE=...
-mix firmware
-mix firmware.burn
+bin/burn
 ```
 
 # Switching Target
 
-* change .envrc
+* change .envrc.private
 * change `@target` in mix.exs
 * run mix deps.get
 
