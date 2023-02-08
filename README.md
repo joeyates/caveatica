@@ -20,7 +20,7 @@ Check https://hexdocs.pm/nerves/systems.html#compatibility under rpi3
 
 With asdf:
 
-```
+```sh
 asdf install
 ```
 
@@ -31,7 +31,7 @@ the development machine.
 
 The file `.envrc` lists variables that need to be set.
 
-```
+```sh
 cp .envrc .envrc.private
 ```
 
