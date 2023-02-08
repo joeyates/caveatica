@@ -1,5 +1,7 @@
 # Caveatica
 
+caveatica - from the Latin *cavea* ("chicken coop"), and *robotics*.
+
 Open and shut the door to a chicken coop.
 
 This is a Nerves application that runs on a Raspberry Pi
