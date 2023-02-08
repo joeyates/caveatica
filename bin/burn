@@ -14,6 +14,16 @@ sudo chown -R $USER: _build
 
 mix firmware
 
-sudo env "PATH=$PATH" "HOME=$HOME" bash -c '. .envrc && mix burn --device=$FIRMWARE_DEVICE'
+sudo \
+  env \
+  "PATH=$PATH" \
+  "HOME=$HOME" \
+  "CAVEATICA_SERVER_FQDN=$CAVEATICA_SERVER_FQDN" \
+  "CAVEATICA_SERVER_USER=$CAVEATICA_SERVER_USER" \
+  "MIX_TARGET=$MIX_TARGET" \
+  "FIRMWARE_DEVICE=$FIRMWARE_DEVICE" \
+  "WIFI_SSID=$WIFI_SSID" \
+  "WIFI_PASSPHRASE=$WIFI_PASSPHRASE" \
+  mix burn --device=$FIRMWARE_DEVICE
 
 sudo chown -R $USER: _build
