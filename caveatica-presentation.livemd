@@ -1,0 +1,104 @@
+# Caveatica
+
+```elixir
+Mix.install([
+  {:circuits_gpio, "~> 1.0"},
+  {:kino, "~> 0.8.0"}
+])
+```
+
+## The Circuit
+
+A Livebook for presentations of Caveatica
+
+...rpi GPIO pins
+
+...the circuit
+
+## Basic Control
+
+```elixir
+pin = 17
+# 0 to stop or 1 to run
+setting = 0
+
+{:ok, gpio} = Circuits.GPIO.open(pin, :output)
+Circuits.GPIO.write(gpio, setting)
+Circuits.GPIO.close(gpio)
+```
+
+Shows up on the voltmeter!
+
+## Caveatica Control Module
+
+```elixir
+defmodule Caveatica do
+  @open_pin 17
+  @close_pin 18
+
+  def start_raising do
+    {:ok, gpio} = Circuits.GPIO.open(@open_pin, :output)
+    Circuits.GPIO.write(gpio, 1)
+    Circuits.GPIO.close(gpio)
+  end
+
+  def stop_raising do
+    {:ok, gpio} = Circuits.GPIO.open(@open_pin, :output)
+    Circuits.GPIO.write(gpio, 0)
+    Circuits.GPIO.close(gpio)
+  end
+
+  def start_lowering do
+    {:ok, gpio} = Circuits.GPIO.open(@close_pin, :output)
+    Circuits.GPIO.write(gpio, 1)
+    Circuits.GPIO.close(gpio)
+  end
+
+  def stop_lowering do
+    {:ok, gpio} = Circuits.GPIO.open(@close_pin, :output)
+    Circuits.GPIO.write(gpio, 0)
+    Circuits.GPIO.close(gpio)
+  end
+end
+```
+
+```elixir
+defmodule MonitorButtons do
+  @duration 3000
+
+  def run do
+    receive do
+      {:open, %{type: :click}} ->
+        Caveatica.start_raising()
+        :timer.sleep(@duration)
+        Caveatica.stop_raising()
+
+      {:close, %{type: :click}} ->
+        Caveatica.start_lowering()
+        :timer.sleep(@duration)
+        Caveatica.stop_lowering()
+
+      other ->
+        IO.puts("Unexpected message")
+        IO.inspect(other)
+    end
+
+    run()
+  end
+end
+```
+
+```elixir
+open_button = Kino.Control.button("Open")
+```
+
+```elixir
+close_button = Kino.Control.button("Close")
+```
+
+```elixir
+Kino.Control.subscribe(open_button, :open)
+Kino.Control.subscribe(close_button, :close)
+
+MonitorButtons.run()
+```
