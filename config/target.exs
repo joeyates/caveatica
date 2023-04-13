@@ -14,16 +14,15 @@ keys =
   ]
   |> Enum.filter(&File.exists?/1)
 
-if keys == [],
-  do:
-    Mix.raise("""
+if keys == [] do
+  Mix.raise("""
     No SSH public keys found in ~/.ssh. An ssh authorized key is needed to
     log into the Nerves device and update firmware on it using ssh.
     See your project's config.exs for this error message.
-    """)
+  """)
+end
 
-config :nerves_ssh,
-  authorized_keys: Enum.map(keys, &File.read!/1)
+config :nerves_ssh, :authorized_keys, Enum.map(keys, &File.read!/1)
 
 config :caveatica, :server_fqdn, System.get_env("CAVEATICA_SERVER_FQDN")
 config :caveatica, :server_user, System.get_env("CAVEATICA_SERVER_USER")

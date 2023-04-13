@@ -17,7 +17,8 @@ application.
 
 ## Install A Compatible Erlang Version
 
-Get version of nerves_system_rpi3 from mix.lock
+Get version of `nerves_system_rpi3` from `mix.lock`
+
 Check https://hexdocs.pm/nerves/systems.html#compatibility under rpi3
 
 With asdf:
