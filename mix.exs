@@ -32,6 +32,7 @@ defmodule Caveatica.MixProject do
       {:nerves_time, "~> 0.4.2", targets: @target},
       {:nerves_runtime, "~> 0.13.0", targets: @target},
       {:nerves_pack, "~> 0.7.0", targets: @target},
+      {:nerves_system_rpi0, "~> 1.22", runtime: false, targets: :rpi0},
       {:nerves_system_rpi3, "~> 1.22", runtime: false, targets: :rpi3},
       {:nerves_system_rpi4, "~> 1.22", runtime: false, targets: :rpi4},
       {:ring_logger, "~> 0.8.1"},
