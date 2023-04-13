@@ -2,8 +2,7 @@ defmodule Caveatica.MixProject do
   use Mix.Project
 
   @app :caveatica
-  # Target must match MIX_TARGET
-  @target :rpi3 # :rpi3|:rpi4
+  @target System.get_env("MIX_TARGET") |> String.to_atom()
   @version "0.1.0"
 
   def project do

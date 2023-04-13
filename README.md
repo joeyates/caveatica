@@ -63,9 +63,9 @@ bin/burn
 
 # Switching Target
 
-* change .envrc.private
-* change `@target` in mix.exs
-* run mix deps.get
+* change MIX_TARGET in .envrc.private
+* run `direnv allow`
+* run `mix deps.get`
 
 # Development
 
