@@ -1,0 +1,118 @@
+defmodule Caveatica.Connection do
+  use GenServer
+  require Logger
+
+  @name :connection
+  @server_user Application.compile_env!(:caveatica, :server_user)
+  @server_fqdn Application.compile_env!(:caveatica, :server_fqdn)
+  @ssh_port 22
+  @max_failed_attempts 10
+  @initial_state %{
+    status: :disconnected,
+    conn: nil,
+    attempts: 0,
+    backoff: 1000
+  }
+
+  def start_link(_opts) do
+    Logger.info "Caveatica.Connection.start_link/1"
+    GenServer.start_link(__MODULE__, %{}, name: @name)
+  end
+
+  @impl true
+  def init(_opts) do
+    Logger.info "Caveatica.Connection.init/1"
+
+    send(self(), :connect)
+
+    {:ok, @initial_state}
+  end
+
+  @impl true
+  def handle_call(:reset, _from, state) do
+    Logger.info "Caveatica.Connection.handle_call `:reset`"
+    {:reply, {:ok}, @initial_state}
+  end
+
+  @impl true
+  def handle_call({:send_binary, _opts}, _from, %{status: :disconnected} = state) do
+    Logger.info "Caveatica.Connection.handle_call `:send_binary` - while in disconnected state"
+    {:reply, {:error, :disconnected}, state}
+  end
+
+  @impl true
+  def handle_call({:send_binary, %{binary: binary, pathname: pathname}}, _from, state) do
+    Logger.info "Caveatica.Connection.handle_call `:send_binary`"
+    {:ok, channel} = :ssh_sftp.start_channel(state.conn)
+    :ok = :ssh_sftp.write_file(channel, pathname, binary)
+    :ssh_sftp.stop_channel(channel)
+    {:reply, {:ok, :sent}, state}
+  end
+
+  @impl true
+  def handle_call({:tcpip_tunnel_from_server, _opts}, _from, %{status: :disconnected} = state) do
+    Logger.info "Caveatica.Connection.handle_call `:tcpip_tunnel_from_server` - while in disconnected state"
+    {:reply, {:error, :disconnected}, state}
+  end
+
+  @impl true
+  def handle_call({:tcpip_tunnel_from_server, %{from: from, to: to}}, _from, state) do
+    Logger.info "Caveatica.Connection.handle_call `:tcpip_tunnel_from_server`"
+    result = :ssh.tcpip_tunnel_from_server(state.conn, '127.0.0.1', from, '127.0.0.1', to)
+    {:reply, result, state}
+  end
+
+  @impl true
+  def handle_cast(:connect, state) do
+    Logger.info "Caveatica.Connection.handle_cast `:connect`"
+    {:noreply, connect(state)}
+  end
+
+  @impl true
+  def handle_info(:connect, state) do
+    Logger.info "Caveatica.Connection.handle_info `:connect`"
+    {:noreply, connect(state)}
+  end
+
+  defp connect(state) do
+    Logger.info "Caveatica.Connection: Connecting to control host..."
+    case :ssh.connect(String.to_charlist(@server_fqdn), @ssh_port, ssh_config()) do
+      {:ok, conn} ->
+        Logger.info "Caveatica.Connection: Successfully connected"
+        # TODO: this should be done on request, by listeners or pubsub
+        GenServer.cast(:epmd, :setup_tunnel)
+        %{state | conn: conn, status: :connected}
+      {:error, reason} ->
+        Logger.error "Caveatica.Connection: Connection failed: #{reason}"
+        attempts = state.attempts
+        Logger.error "Caveatica.Connection: attempts: #{attempts}"
+        if attempts < @max_failed_attempts do
+          backoff = state.backoff * 2
+          Logger.error "Retrying in #{backoff}ms..."
+          Process.send_after(self(), :connect, backoff)
+          %{state | attempts: attempts + 1, backoff: backoff}
+        else
+          Logger.error "Giving up - too many failed attempts"
+          %{state | attempts: attempts, status: :dead}
+        end
+    end
+  end
+
+  def ssh_disconnected(term) do
+    Logger.info("Caveatica.Connection: Received SSH disconnect: #{term}")
+    {:ok} = GenServer.call(@name, :reset)
+    GenServer.cast(@name, :connect)
+  end
+
+  defp ssh_config do
+    ssh_key_path = Application.app_dir(:caveatica, "priv")
+
+    [
+      user_interaction: false,
+      silently_accept_hosts: true,
+      user: String.to_charlist(@server_user),
+      user_dir: String.to_charlist(ssh_key_path),
+      disconnectfun: &ssh_disconnected/1
+    ]
+  end
+end

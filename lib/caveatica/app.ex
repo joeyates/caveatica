@@ -6,7 +6,10 @@ defmodule Caveatica.App do
 
   def start(_type, _args) do
     Logger.info "Caveatica.App.start/2"
-    children = [Caveatica.Epmd]
+    children = [
+      Caveatica.Epmd,
+      Caveatica.Connection
+    ]
 
     {:ok, pid} = Supervisor.start_link(children, strategy: :one_for_one)
 
