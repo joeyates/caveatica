@@ -8,6 +8,8 @@ defmodule Caveatica.App do
     Logger.info "Caveatica.App.start/2"
     children = [
       Caveatica.Epmd,
+      Picam.Camera,
+      Caveatica.Camera,
       Caveatica.Connection
     ]
 
