@@ -11,11 +11,12 @@ defmodule Caveatica.Epmd do
     GenServer.start_link(__MODULE__, %{}, name: @name)
   end
 
+  @impl true
   def init(_opts) do
     Logger.info "Caveatica.Epmd.init/1"
-    Logger.info "Starting epmd..."
+    Logger.info "Caveatica.Epmd: Starting epmd..."
     System.cmd("epmd", ["-daemon"])
-    Logger.info "Registering as distributed node..."
+    Logger.info "Caveatica.Epmd: Registering as distributed node..."
     Node.start(:"caveatica@127.0.0.1")
 
     {:ok, nil}
