@@ -6,12 +6,16 @@ defmodule Caveatica.Connection do
   @server_user Application.compile_env!(:caveatica, :server_user)
   @server_fqdn Application.compile_env!(:caveatica, :server_fqdn)
   @ssh_port 22
-  @max_failed_attempts 10
+  @initial_backoff 1000
+  @backoff_factor 1.1
+  # 1.1^87 is slightly more than 3600,
+  # so we try 86 times before rebooting.
+  @max_backoff 3_600_000
   @initial_state %{
     status: :disconnected,
     conn: nil,
     attempts: 0,
-    backoff: 1000
+    backoff: @initial_backoff
   }
 
   def start_link(_opts) do
@@ -86,13 +90,14 @@ defmodule Caveatica.Connection do
         Logger.error "Caveatica.Connection: Connection failed: #{reason}"
         attempts = state.attempts
         Logger.error "Caveatica.Connection: attempts: #{attempts}"
-        if attempts < @max_failed_attempts do
-          backoff = state.backoff * 2
-          Logger.error "Retrying in #{backoff}ms..."
+        backoff = state.backoff * @backoff_factor
+        if backoff < @max_backoff do
+          Logger.error "Caveatica.Connection: Retrying in #{backoff}ms..."
           Process.send_after(self(), :connect, backoff)
           %{state | attempts: attempts + 1, backoff: backoff}
         else
-          Logger.error "Giving up - too many failed attempts"
+          Logger.error "Caveatica.Connection: Too many failed attempts, rebooting"
+          Nerves.Runtime.reboot()
           %{state | attempts: attempts, status: :dead}
         end
     end
