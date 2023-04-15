@@ -3,7 +3,7 @@ defmodule Caveatica.Camera do
   require Logger
 
   @photo_interval 15000 # ms
-  @upload_path '/tmp/caveatica/caveatica.jpg'
+  @upload_path '/home/dokku/caveatica/data/caveatica.jpg'
 
   def start_link(_opts) do
     Logger.info "Caveatica.Camera.start_link/1"
