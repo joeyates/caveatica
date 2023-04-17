@@ -99,7 +99,7 @@ defmodule Caveatica.Connection do
         else
           Logger.error "Caveatica.Connection: Too many failed attempts, rebooting"
           Nerves.Runtime.reboot()
-          %{state | attempts: attempts, status: :dead}
+          %{state | status: :dead}
         end
     end
   end
