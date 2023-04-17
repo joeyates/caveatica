@@ -46,6 +46,11 @@ defmodule Caveatica.Connection do
   end
 
   @impl true
+  def handle_call(:status, _from, state) do
+    {:reply, state, state}
+  end
+
+  @impl true
   def handle_call({:send_binary, %{binary: binary, pathname: pathname}}, _from, state) do
     Logger.info "Caveatica.Connection.handle_call `:send_binary`"
     {:ok, channel} = :ssh_sftp.start_channel(state.conn)
