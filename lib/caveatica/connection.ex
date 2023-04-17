@@ -14,6 +14,7 @@ defmodule Caveatica.Connection do
   @initial_state %{
     status: :disconnected,
     conn: nil,
+    connected_at: nil,
     attempts: 0,
     backoff: @initial_backoff
   }
@@ -85,7 +86,7 @@ defmodule Caveatica.Connection do
         Logger.info "Caveatica.Connection: Successfully connected"
         # TODO: this should be done on request, by listeners or pubsub
         GenServer.cast(:epmd, :setup_tunnel)
-        %{state | conn: conn, status: :connected}
+        %{state | conn: conn, status: :connected, connected_at: DateTime.utc_now()}
       {:error, reason} ->
         Logger.error "Caveatica.Connection: Connection failed: #{reason}"
         attempts = state.attempts
