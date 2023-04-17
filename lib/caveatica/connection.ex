@@ -33,7 +33,7 @@ defmodule Caveatica.Connection do
   end
 
   @impl true
-  def handle_call(:reset, _from, state) do
+  def handle_call(:reset, _from, _state) do
     Logger.info "Caveatica.Connection.handle_call `:reset`"
     {:reply, {:ok}, @initial_state}
   end
