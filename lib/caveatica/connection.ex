@@ -79,7 +79,7 @@ defmodule Caveatica.Connection do
   end
 
   defp connect(state) do
-    Logger.info "Caveatica.Connection: Connecting to control host..."
+    Logger.info "Caveatica.Connection: Connecting to control host #{@server_fqdn} on port #{@ssh_port}..."
     case :ssh.connect(String.to_charlist(@server_fqdn), @ssh_port, ssh_config()) do
       {:ok, conn} ->
         Logger.info "Caveatica.Connection: Successfully connected"
@@ -91,6 +91,7 @@ defmodule Caveatica.Connection do
         attempts = state.attempts
         Logger.error "Caveatica.Connection: attempts: #{attempts}"
         backoff = state.backoff * @backoff_factor
+        Logger.info "Caveatica.Connection.connect backoff: #{inspect(backoff, [pretty: true, width: 0])}"
         if backoff < @max_backoff do
           Logger.error "Caveatica.Connection: Retrying in #{backoff}ms..."
           Process.send_after(self(), :connect, trunc(backoff))
