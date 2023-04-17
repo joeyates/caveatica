@@ -101,6 +101,10 @@ defmodule Caveatica.Connection do
           Nerves.Runtime.reboot()
           %{state | status: :dead}
         end
+      response ->
+        Logger.info "Caveatica.Connection.connect received unexpected response: #{inspect(response)}"
+        Process.send_after(self(), :connect, state.backoff)
+        state
     end
   end
 
