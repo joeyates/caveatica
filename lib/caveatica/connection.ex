@@ -93,7 +93,7 @@ defmodule Caveatica.Connection do
         backoff = state.backoff * @backoff_factor
         if backoff < @max_backoff do
           Logger.error "Caveatica.Connection: Retrying in #{backoff}ms..."
-          Process.send_after(self(), :connect, backoff)
+          Process.send_after(self(), :connect, trunc(backoff))
           %{state | attempts: attempts + 1, backoff: backoff}
         else
           Logger.error "Caveatica.Connection: Too many failed attempts, rebooting"
