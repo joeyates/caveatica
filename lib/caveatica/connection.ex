@@ -40,14 +40,16 @@ defmodule Caveatica.Connection do
   end
 
   @impl true
-  def handle_call({:send_binary, _opts}, _from, %{status: :disconnected} = state) do
-    Logger.info "Caveatica.Connection.handle_call `:send_binary` - while in disconnected state"
-    {:reply, {:error, :disconnected}, state}
-  end
 
   @impl true
   def handle_call(:status, _from, state) do
     {:reply, state, state}
+  end
+
+  @impl true
+  def handle_call({:send_binary, _opts}, _from, %{status: :disconnected} = state) do
+    Logger.info "Caveatica.Connection.handle_call `:send_binary` - while in disconnected state"
+    {:reply, {:error, :disconnected}, state}
   end
 
   @impl true
