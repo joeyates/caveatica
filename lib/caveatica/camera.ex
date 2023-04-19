@@ -22,10 +22,14 @@ defmodule Caveatica.Camera do
   @impl true
   def handle_info(:take_photo, state) do
     Logger.info "Caveatica.Camera.handle_info `:take_photo`"
-    result = GenServer.call(:connection, {:send_binary, %{binary: Picam.next_frame(), pathname: @upload_path}}, :infinity)
-    Logger.info "Caveatica.Camera send_binary result: #{inspect(result, [pretty: true, width: 0])}"
+    take_photo()
     Process.send_after(self(), :take_photo, @photo_interval)
 
     {:noreply, state}
+  end
+
+  defp take_photo do
+    result = GenServer.call(:connection, {:send_binary, %{binary: Picam.next_frame(), pathname: @upload_path}}, :infinity)
+    Logger.info "Caveatica.Camera.take_photo/0 send_binary result: #{inspect(result, [pretty: true, width: 0])}"
   end
 end
