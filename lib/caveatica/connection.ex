@@ -53,6 +53,8 @@ defmodule Caveatica.Connection do
   @impl true
   def handle_call({:send_binary, %{binary: binary, pathname: pathname}}, _from, state) do
     Logger.info "Caveatica.Connection.handle_call `:send_binary`"
+    size = byte_size(binary)
+    Logger.info "Caveatica.Connection.handle_call binary size: #{size}"
     {:ok, channel} = :ssh_sftp.start_channel(state.conn)
     :ok = :ssh_sftp.write_file(channel, pathname, binary)
     :ssh_sftp.stop_channel(channel)
