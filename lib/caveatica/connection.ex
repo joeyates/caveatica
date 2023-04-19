@@ -40,10 +40,16 @@ defmodule Caveatica.Connection do
   end
 
   @impl true
-
-  @impl true
   def handle_call(:status, _from, state) do
     {:reply, state, state}
+  end
+
+  @impl true
+  def handle_call({:file_info, pathname}, _from, state) do
+    Logger.info "Caveatica.Connection.handle_call `:file_info`"
+    {:ok, channel} = :ssh_sftp.start_channel(state.conn)
+    result = :ssh_sftp.read_file_info(channel, pathname)
+    :ssh_sftp.stop_channel(channel)
   end
 
   @impl true
