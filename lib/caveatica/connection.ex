@@ -84,6 +84,10 @@ defmodule Caveatica.Connection do
     {:noreply, connect(state)}
   end
 
+  def status do
+    GenServer.call(@name, :status)
+  end
+
   defp connect(state) do
     Logger.info "Caveatica.Connection: Connecting to control host #{@server_fqdn} on port #{@ssh_port}..."
     case :ssh.connect(String.to_charlist(@server_fqdn), @ssh_port, ssh_config()) do
