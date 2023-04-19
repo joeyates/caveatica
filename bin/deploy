@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+set -x
+
+mix firmware
+./bin/upload.sh
