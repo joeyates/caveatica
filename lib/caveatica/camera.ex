@@ -25,11 +25,18 @@ defmodule Caveatica.Camera do
   @impl true
   def handle_info(:take_photo, state) do
     Logger.info "Caveatica.Camera.handle_info `:take_photo`"
-    lock_exists = lock_exists()
-    if !lock_exists do
-      take_photo()
-      create_lock()
+    pid = Process.whereis(:connection)
+    {:message_queue_len, length} = Process.info(pid, :message_queue_len)
+    Logger.info "Caveatica.Camera.handle_info, Connection message queue length: #{length}"
+    if length == 0 do
+      lock_exists = lock_exists()
+      Logger.info("Caveatica.Camera.handle_info, lock_exists: #{lock_exists}")
+      if !lock_exists do
+        take_photo()
+        create_lock()
+      end
     end
+
     Process.send_after(self(), :take_photo, @photo_interval)
 
     {:noreply, state}
