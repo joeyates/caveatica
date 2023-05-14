@@ -77,7 +77,7 @@ defmodule Caveatica.Connection do
   def handle_call({:tcpip_tunnel_from_server, %{from: from, to: to}}, _from, state) do
     Logger.info "Caveatica.Connection.handle_call `:tcpip_tunnel_from_server`"
     result = :ssh.tcpip_tunnel_from_server(state.conn, '127.0.0.1', from, '127.0.0.1', to)
-    {:reply, result, state}
+    {:reply, {:ok, result}, state}
   end
 
   @impl true
