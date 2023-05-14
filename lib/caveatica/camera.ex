@@ -2,13 +2,14 @@ defmodule Caveatica.Camera do
   use GenServer
   require Logger
 
+  @name :camera
   @photo_interval 5000 # ms
   @upload_path '/home/dokku/caveatica/data/caveatica.jpg'
   @lock_path '/home/dokku/caveatica/data/caveatica.lock'
 
   def start_link(_opts) do
     Logger.info "Caveatica.Camera.start_link/1"
-    GenServer.start_link(__MODULE__, %{})
+    GenServer.start_link(__MODULE__, %{}, name: @name)
   end
 
   @impl true
