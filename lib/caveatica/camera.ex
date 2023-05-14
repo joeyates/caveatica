@@ -15,7 +15,8 @@ defmodule Caveatica.Camera do
   def init(_opts) do
     Logger.info "Caveatica.Camera.init/1"
 
-    send(self(), :take_photo)
+    # Give Connection time to start
+    Process.send_after(self(), :take_photo, @photo_interval)
 
     {:ok, nil}
   end
