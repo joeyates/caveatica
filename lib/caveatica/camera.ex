@@ -4,8 +4,8 @@ defmodule Caveatica.Camera do
 
   @name :camera
   @photo_interval 5000 # ms
-  @upload_path '/home/dokku/caveatica/data/caveatica.jpg'
-  @lock_path '/home/dokku/caveatica/data/caveatica.lock'
+  @upload_path to_charlist("/home/dokku/caveatica/data/caveatica.jpg")
+  @lock_path to_charlist("/home/dokku/caveatica/data/caveatica.lock")
 
   def start_link(_opts) do
     Logger.info "Caveatica.Camera.start_link/1"
