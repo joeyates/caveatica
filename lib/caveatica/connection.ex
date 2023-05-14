@@ -50,6 +50,8 @@ defmodule Caveatica.Connection do
     {:ok, channel} = :ssh_sftp.start_channel(state.conn)
     result = :ssh_sftp.read_file_info(channel, pathname)
     :ssh_sftp.stop_channel(channel)
+    # result will be {:ok, info} or {:error, reason}
+    {:reply, result, state}
   end
 
   @impl true
