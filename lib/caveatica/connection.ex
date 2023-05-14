@@ -81,12 +81,6 @@ defmodule Caveatica.Connection do
   end
 
   @impl true
-  def handle_cast(:connect, state) do
-    Logger.info "Caveatica.Connection.handle_cast `:connect`"
-    {:noreply, connect(state)}
-  end
-
-  @impl true
   def handle_info(:connect, state) do
     Logger.info "Caveatica.Connection.handle_info `:connect`"
     {:noreply, connect(state)}
@@ -128,8 +122,9 @@ defmodule Caveatica.Connection do
 
   def ssh_disconnected(term) do
     Logger.info("Caveatica.Connection: Received SSH disconnect: #{term}")
-    {:ok} = GenServer.call(@name, :reset)
-    GenServer.cast(@name, :connect)
+    GenServer.call(@name, :reset)
+    connection = Process.whereis(@name)
+    send(connection, :connect)
   end
 
   defp ssh_config do
