@@ -3,7 +3,7 @@ defmodule Caveatica.Camera do
   require Logger
 
   @name :camera
-  @photo_interval 5000 # ms
+  @photo_interval 1000 # ms
   @upload_path to_charlist("/home/dokku/caveatica/data/caveatica.jpg")
   @lock_path to_charlist("/home/dokku/caveatica/data/caveatica.lock")
 
