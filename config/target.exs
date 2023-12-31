@@ -99,3 +99,12 @@ config :mdns_lite,
       port: 4369
     }
   ]
+
+database_url =
+  System.get_env("DATABASE_URL") ||
+    raise """
+    environment variable DATABASE_URL is missing.
+    For example: ecto://USER:PASS@HOST/DATABASE
+    """
+
+config :caveatica, :database_url, database_url
