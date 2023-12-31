@@ -1,7 +1,20 @@
 defmodule Caveatica.Logging do
   defstruct ~w(index message time level file line function mfa)a
 
-  def messages(start \\ 0) do
+  def summary(opts \\ []) do
+    start = Keyword.get(opts, :start, 0)
+    count = Keyword.get(opts, :count)
+    filter = Keyword.get(opts, :filter, false)
+    with messages <- messages(start: start),
+         messages <- filter(messages, filter),
+         messages <- count(messages, count) do
+      messages
+      |> Enum.map(&to_s/1)
+    end
+  end
+
+  def messages(opts \\ []) do
+    start = Keyword.get(opts, :start, 0)
     start
     |> RingLogger.get()
     |> Enum.map(fn {_level, {Logger, message, time, info}} -> {message, time, info} end)
@@ -20,11 +33,26 @@ defmodule Caveatica.Logging do
     end)
   end
 
-  def to_string(%__MODULE__{} = m, short: true) do
+  def to_s(%__MODULE__{} = m, short: true) do
     "[#{m.index}] #{m.message}"
   end
 
-  def to_string(%__MODULE__{} = m) do
+  def to_s(%__MODULE__{} = m) do
     "[#{m.index}] #{m.file}:#{m.line} - #{m.function} - #{m.message}"
+  end
+
+  defp count(messages, nil), do: messages
+  defp count(messages, count) do
+    messages
+    |> Enum.reverse()
+    |> Enum.take(count)
+    |> Enum.reverse()
+  end
+
+  defp filter(messages, false), do: messages
+
+  defp filter(messages, true) do
+    messages
+    |> Enum.filter(& elem(&1.mfa, 0) == Caveatica.Connection)
   end
 end
