@@ -40,14 +40,26 @@ defmodule Caveatica.Connection do
   end
 
   @impl true
-  def handle_call({:send_binary, _opts}, _from, %{status: :disconnected} = state) do
-    Logger.info "Caveatica.Connection.handle_call `:send_binary` - while in disconnected state"
-    {:reply, {:error, :disconnected}, state}
+  def handle_call(:status, _from, state) do
+    {:reply, state, state}
   end
 
   @impl true
-  def handle_call(:status, _from, state) do
-    {:reply, state, state}
+  def handle_call(call, _from, %{status: :disconnected} = state) do
+    Logger.info "Caveatica.Connection.handle_call #{inspect(call)} - while in disconnected state"
+    {:reply, {:error, :disconnected}, state}
+  end
+
+  # Below here are calls which require an active connection
+
+  @impl true
+  def handle_call({:file_info, pathname}, _from, state) do
+    Logger.info "Caveatica.Connection.handle_call `:file_info`"
+    {:ok, channel} = :ssh_sftp.start_channel(state.conn)
+    result = :ssh_sftp.read_file_info(channel, pathname)
+    :ssh_sftp.stop_channel(channel)
+    # result will be {:ok, info} or {:error, reason}
+    {:reply, result, state}
   end
 
   @impl true
@@ -62,22 +74,10 @@ defmodule Caveatica.Connection do
   end
 
   @impl true
-  def handle_call({:tcpip_tunnel_from_server, _opts}, _from, %{status: :disconnected} = state) do
-    Logger.info "Caveatica.Connection.handle_call `:tcpip_tunnel_from_server` - while in disconnected state"
-    {:reply, {:error, :disconnected}, state}
-  end
-
-  @impl true
   def handle_call({:tcpip_tunnel_from_server, %{from: from, to: to}}, _from, state) do
     Logger.info "Caveatica.Connection.handle_call `:tcpip_tunnel_from_server`"
     result = :ssh.tcpip_tunnel_from_server(state.conn, '127.0.0.1', from, '127.0.0.1', to)
     {:reply, result, state}
-  end
-
-  @impl true
-  def handle_cast(:connect, state) do
-    Logger.info "Caveatica.Connection.handle_cast `:connect`"
-    {:noreply, connect(state)}
   end
 
   @impl true
@@ -122,8 +122,9 @@ defmodule Caveatica.Connection do
 
   def ssh_disconnected(term) do
     Logger.info("Caveatica.Connection: Received SSH disconnect: #{term}")
-    {:ok} = GenServer.call(@name, :reset)
-    GenServer.cast(@name, :connect)
+    GenServer.call(@name, :reset)
+    connection = Process.whereis(@name)
+    send(connection, :connect)
   end
 
   defp ssh_config do
