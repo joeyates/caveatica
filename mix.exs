@@ -38,7 +38,10 @@ defmodule Caveatica.MixProject do
       {:nerves_system_rpi4, "~> 1.22", runtime: false, targets: :rpi4},
       {:picam, "~> 0.4.1"},
       {:ring_logger, "~> 0.8.1"},
-      {:toolshed, "~> 0.2.13"}
+      {:toolshed, "~> 0.2.13"},
+      # PubSub
+      {:ecto, ">= 0.0.0"}, # Only used for parse_url/1
+      {:postgrex, ">= 0.0.0"}
     ]
   end
 
