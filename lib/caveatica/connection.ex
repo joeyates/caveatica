@@ -95,8 +95,6 @@ defmodule Caveatica.Connection do
     case :ssh.connect(String.to_charlist(@server_fqdn), @ssh_port, ssh_config()) do
       {:ok, conn} ->
         Logger.info "Caveatica.Connection: Successfully connected"
-        # TODO: this should be done on request, by listeners or pubsub
-        GenServer.cast(:epmd, :setup_tunnel)
         %{state | conn: conn, status: :connected, connected_at: DateTime.utc_now()}
       {:error, reason} ->
         Logger.error "Caveatica.Connection: Connection failed: #{reason}"
