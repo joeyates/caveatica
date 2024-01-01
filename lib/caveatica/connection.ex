@@ -39,12 +39,10 @@ defmodule Caveatica.Connection do
     {:reply, {:ok}, @initial_state}
   end
 
-  @impl true
   def handle_call(:status, _from, state) do
     {:reply, state, state}
   end
 
-  @impl true
   def handle_call(call, _from, %{status: :disconnected} = state) do
     Logger.info "Caveatica.Connection.handle_call #{inspect(call)} - while in disconnected state"
     {:reply, {:error, :disconnected}, state}
@@ -52,7 +50,6 @@ defmodule Caveatica.Connection do
 
   # Below here are calls which require an active connection
 
-  @impl true
   def handle_call({:file_info, pathname}, _from, state) do
     Logger.info "Caveatica.Connection.handle_call `:file_info`"
     {:ok, channel} = :ssh_sftp.start_channel(state.conn)
@@ -62,7 +59,6 @@ defmodule Caveatica.Connection do
     {:reply, result, state}
   end
 
-  @impl true
   def handle_call({:send_binary, %{binary: binary, pathname: pathname}}, _from, state) do
     Logger.info "Caveatica.Connection.handle_call `:send_binary`"
     size = byte_size(binary)
@@ -73,7 +69,6 @@ defmodule Caveatica.Connection do
     {:reply, {:ok, :sent}, state}
   end
 
-  @impl true
   def handle_call({:tcpip_tunnel_from_server, %{from: from, to: to}}, _from, state) do
     Logger.info "Caveatica.Connection.handle_call `:tcpip_tunnel_from_server`"
     result = :ssh.tcpip_tunnel_from_server(state.conn, '127.0.0.1', from, '127.0.0.1', to)
