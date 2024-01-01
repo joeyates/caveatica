@@ -38,7 +38,9 @@ defmodule Caveatica.MixProject do
       {:nerves_system_rpi4, "~> 1.22", runtime: false, targets: :rpi4},
       {:picam, "~> 0.4.1"},
       {:ring_logger, "~> 0.8.1"},
-      {:toolshed, "~> 0.2.13"}
+      {:toolshed, "~> 0.2.13"},
+      # Websocket
+      {:slipstream, "~> 1.0"}
     ]
   end
 
