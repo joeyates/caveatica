@@ -86,8 +86,21 @@ defmodule Caveatica.Connection do
   end
 
   defp connect(state) do
+    import Bitwise
+    ssh_key_path = ssh_key_path()
+    Logger.debug("SSH 'HOME' directory '#{ssh_key_path}' contents:")
+    ssh_key_path
+    |> Path.join("*")
+    |> Path.wildcard()
+    |> Enum.each(fn pathname ->
+      s = File.stat!(pathname)
+      mode = Integer.to_string(s.mode &&& 0xfff, 8)
+      Logger.debug("file '#{pathname}': #{mode}")
+    end)
     Logger.info "Caveatica.Connection: Connecting to control host #{@server_fqdn} on port #{@ssh_port}..."
-    case :ssh.connect(String.to_charlist(@server_fqdn), @ssh_port, ssh_config()) do
+    config = ssh_config()
+    Logger.debug("Config: #{inspect(config)}")
+    case :ssh.connect(String.to_charlist(@server_fqdn), @ssh_port, config) do
       {:ok, conn} ->
         Logger.info "Caveatica.Connection: Successfully connected"
         %{state | conn: conn, status: :connected, connected_at: DateTime.utc_now()}
@@ -120,14 +133,14 @@ defmodule Caveatica.Connection do
     send(connection, :connect)
   end
 
-  defp ssh_config do
-    ssh_key_path = Application.app_dir(:caveatica, "priv")
+  def ssh_key_path, do: Application.app_dir(:caveatica, "priv")
 
+  defp ssh_config do
     [
       user_interaction: false,
       silently_accept_hosts: true,
       user: String.to_charlist(@server_user),
-      user_dir: String.to_charlist(ssh_key_path),
+      user_dir: String.to_charlist(ssh_key_path()),
       disconnectfun: &ssh_disconnected/1
     ]
   end
