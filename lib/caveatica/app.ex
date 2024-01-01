@@ -9,7 +9,8 @@ defmodule Caveatica.App do
     children = [
       Picam.Camera,
       Caveatica.Connection,
-      Caveatica.Camera
+      Caveatica.Camera,
+      Caveatica.Receiver
     ]
 
     {:ok, pid} = Supervisor.start_link(children, strategy: :one_for_one)
