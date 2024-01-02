@@ -33,11 +33,19 @@ defmodule Caveatica.SocketClient do
   end
 
   @impl Slipstream
-  def handle_continue(:start_ping, socket) do
-    Logger.info("handle_continue")
-    timer = :timer.send_interval(1000, self(), :request_metrics)
+  def handle_disconnect(reason, socket) do
+    Logger.info("handle_disconnect: #{inspect(reason)}")
 
-    {:noreply, assign(socket, :ping_timer, timer)}
+    ping_timer = socket.assigns[:ping_timer]
+
+    if ping_timer do
+      :timer.cancel(ping_timer)
+    end
+
+    case reconnect(socket) do
+      {:ok, socket} -> {:ok, socket}
+      {:error, reason} -> {:stop, reason, socket}
+    end
   end
 
   @impl Slipstream
