@@ -24,7 +24,7 @@ defmodule Caveatica.Camera do
 
   @impl true
   def handle_info(:upload_photo, state) do
-    Logger.info "Caveatica.Camera checking whther to upload photo"
+    Logger.info "Caveatica.Camera checking whether to upload photo"
     pid = Process.whereis(:connection)
     with {:message_queue_len, 0} <- Process.info(pid, :message_queue_len),
          %{status: :connected} <- Caveatica.Connection.status(),
