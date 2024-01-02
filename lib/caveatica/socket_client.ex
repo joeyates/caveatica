@@ -47,7 +47,9 @@ defmodule Caveatica.SocketClient do
 
     case reconnect(socket) do
       {:ok, socket} -> {:ok, socket}
-      {:error, reason} -> {:stop, reason, socket}
+      {:error, reason} ->
+        Logger.info("reconnect failed: #{inspect(reason)}")
+        {:stop, reason, socket}
     end
   end
 
