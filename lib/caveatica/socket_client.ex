@@ -49,9 +49,9 @@ defmodule Caveatica.SocketClient do
   end
 
   @impl Slipstream
-  def handle_connect(socket) do
-    Logger.info("handle_connect")
-    {:ok, join(socket, @topic)}
+  def handle_topic_close(topic, reason, socket) do
+    Logger.info("handle_topic_close: #{inspect(reason)}")
+    rejoin(socket, topic)
   end
 
   @impl Slipstream
@@ -100,16 +100,5 @@ defmodule Caveatica.SocketClient do
     Logger.error("Unexpected push from server: #{event} #{inspect(message)}")
 
     {:ok, socket}
-  end
-
-  @impl Slipstream
-  def handle_disconnect(_reason, socket) do
-    ping_timer = socket.assigns[:ping_timer]
-
-    if ping_timer do
-      :timer.cancel(ping_timer)
-    end
-
-    {:stop, :normal, socket}
   end
 end
