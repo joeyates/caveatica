@@ -62,6 +62,12 @@ Copy the public key to the Caveatica public server.
 bin/burn
 ```
 
+# Connect to Caveatica
+
+```sh
+ssh root@nerves.local
+```
+
 # Switching Target
 
 * change MIX_TARGET in .envrc.private

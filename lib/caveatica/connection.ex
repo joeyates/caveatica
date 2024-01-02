@@ -39,12 +39,10 @@ defmodule Caveatica.Connection do
     {:reply, {:ok}, @initial_state}
   end
 
-  @impl true
   def handle_call(:status, _from, state) do
     {:reply, state, state}
   end
 
-  @impl true
   def handle_call(call, _from, %{status: :disconnected} = state) do
     Logger.info "Caveatica.Connection.handle_call #{inspect(call)} - while in disconnected state"
     {:reply, {:error, :disconnected}, state}
@@ -52,7 +50,6 @@ defmodule Caveatica.Connection do
 
   # Below here are calls which require an active connection
 
-  @impl true
   def handle_call({:file_info, pathname}, _from, state) do
     Logger.info "Caveatica.Connection.handle_call `:file_info`"
     {:ok, channel} = :ssh_sftp.start_channel(state.conn)
@@ -62,7 +59,6 @@ defmodule Caveatica.Connection do
     {:reply, result, state}
   end
 
-  @impl true
   def handle_call({:send_binary, %{binary: binary, pathname: pathname}}, _from, state) do
     Logger.info "Caveatica.Connection.handle_call `:send_binary`"
     size = byte_size(binary)
@@ -73,7 +69,6 @@ defmodule Caveatica.Connection do
     {:reply, {:ok, :sent}, state}
   end
 
-  @impl true
   def handle_call({:tcpip_tunnel_from_server, %{from: from, to: to}}, _from, state) do
     Logger.info "Caveatica.Connection.handle_call `:tcpip_tunnel_from_server`"
     result = :ssh.tcpip_tunnel_from_server(state.conn, '127.0.0.1', from, '127.0.0.1', to)
@@ -91,12 +86,23 @@ defmodule Caveatica.Connection do
   end
 
   defp connect(state) do
+    import Bitwise
+    ssh_key_path = ssh_key_path()
+    Logger.debug("SSH 'HOME' directory '#{ssh_key_path}' contents:")
+    ssh_key_path
+    |> Path.join("*")
+    |> Path.wildcard()
+    |> Enum.each(fn pathname ->
+      s = File.stat!(pathname)
+      mode = Integer.to_string(s.mode &&& 0xfff, 8)
+      Logger.debug("file '#{pathname}': #{mode}")
+    end)
     Logger.info "Caveatica.Connection: Connecting to control host #{@server_fqdn} on port #{@ssh_port}..."
-    case :ssh.connect(String.to_charlist(@server_fqdn), @ssh_port, ssh_config()) do
+    config = ssh_config()
+    Logger.debug("Config: #{inspect(config)}")
+    case :ssh.connect(String.to_charlist(@server_fqdn), @ssh_port, config) do
       {:ok, conn} ->
         Logger.info "Caveatica.Connection: Successfully connected"
-        # TODO: this should be done on request, by listeners or pubsub
-        GenServer.cast(:epmd, :setup_tunnel)
         %{state | conn: conn, status: :connected, connected_at: DateTime.utc_now()}
       {:error, reason} ->
         Logger.error "Caveatica.Connection: Connection failed: #{reason}"
@@ -127,14 +133,14 @@ defmodule Caveatica.Connection do
     send(connection, :connect)
   end
 
-  defp ssh_config do
-    ssh_key_path = Application.app_dir(:caveatica, "priv")
+  def ssh_key_path, do: Application.app_dir(:caveatica, "priv")
 
+  defp ssh_config do
     [
       user_interaction: false,
       silently_accept_hosts: true,
       user: String.to_charlist(@server_user),
-      user_dir: String.to_charlist(ssh_key_path),
+      user_dir: String.to_charlist(ssh_key_path()),
       disconnectfun: &ssh_disconnected/1
     ]
   end
