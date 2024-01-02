@@ -106,4 +106,17 @@ defmodule Caveatica.SocketClient do
 
     {:ok, socket}
   end
+
+  @impl Slipstream
+  def handle_cast({:upload_image, binary}, socket) do
+    Logger.info("handle_cast upload_image, size: #{byte_size(binary)}")
+    encoded = Base.encode64(binary)
+    push(socket, @topic, "upload_image", %{binary: encoded})
+    {:noreply, socket}
+  end
+
+  def upload_image(binary) do
+    Logger.info("upload_image/1 size: #{byte_size(binary)}")
+    :ok = GenServer.cast(__MODULE__, {:upload_image, binary})
+  end
 end

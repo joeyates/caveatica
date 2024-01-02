@@ -30,5 +30,7 @@ defmodule Caveatica.Camera do
 
   defp upload_photo do
     Logger.info "Caveatica.Camera uploading photo`"
+    binary = Picam.next_frame()
+    Caveatica.SocketClient.upload_image(binary)
   end
 end
