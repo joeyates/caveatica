@@ -24,8 +24,8 @@ end
 
 config :nerves_ssh, :authorized_keys, Enum.map(keys, &File.read!/1)
 
-config :caveatica, :server_fqdn, System.get_env("CAVEATICA_SERVER_FQDN")
-config :caveatica, :server_user, System.get_env("CAVEATICA_SERVER_USER")
+config :caveatica, :server_fqdn, System.fetch_env!("CAVEATICA_SERVER_FQDN")
+config :caveatica, :server_user, System.fetch_env!("CAVEATICA_SERVER_USER")
 
 wlan0_config =
   case {System.get_env("WIFI_SSID"), System.get_env("WIFI_PASSPHRASE")} do
