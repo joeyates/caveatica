@@ -15,8 +15,21 @@ defmodule Caveatica.SocketClient do
 
   @impl Slipstream
   def init(config) do
-    Logger.info("info: #{inspect(config)}")
-    {:ok, connect!(config), {:continue, :start_ping}}
+    Logger.info("config: #{inspect(config)}")
+    result = connect(config)
+    Logger.info("Socket connect/1 result: #{inspect(result)}")
+    {:ok, socket} = result
+    {:ok, socket}
+  end
+
+  @impl Slipstream
+  def handle_connect(socket) do
+    Logger.info("handle_connect")
+    {
+      :ok,
+      socket
+      |> join(@topic)
+    }
   end
 
   @impl Slipstream
