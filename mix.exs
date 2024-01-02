@@ -28,7 +28,7 @@ defmodule Caveatica.MixProject do
 
   defp deps do
     [
-      {:circuits_gpio, "~> 1.0"},
+      # System
       {:nerves, "~> 1.10.0", runtime: false},
       {:nerves_time, "~> 0.4.2", targets: @target},
       {:nerves_runtime, "~> 0.13.6", targets: @target},
@@ -36,8 +36,13 @@ defmodule Caveatica.MixProject do
       {:nerves_system_rpi0, "~> 1.25", runtime: false, targets: :rpi0},
       {:nerves_system_rpi3, "~> 1.25", runtime: false, targets: :rpi3},
       {:nerves_system_rpi4, "~> 1.25", runtime: false, targets: :rpi4},
+      # GPIO
+      {:circuits_gpio, "~> 1.0"},
+      # Camera
       {:picam, "~> 0.4.1"},
+      # Logging
       {:ring_logger, "~> 0.8.1"},
+      # Shell
       {:toolshed, "~> 0.2.13"},
       # Websocket
       {:jason, ">= 0.0.0"},
