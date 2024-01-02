@@ -8,6 +8,7 @@ defmodule Caveatica.SocketClient do
   require Logger
 
   @topic "control"
+  @request_interval 10_000 # ms
 
   def start_link(args) do
     Slipstream.start_link(__MODULE__, args, name: __MODULE__)
@@ -25,9 +26,11 @@ defmodule Caveatica.SocketClient do
   @impl Slipstream
   def handle_connect(socket) do
     Logger.info("handle_connect")
+    timer = :timer.send_interval(@request_interval, self(), :request_metrics)
     {
       :ok,
       socket
+      |> assign(:ping_timer, timer)
       |> join(@topic)
     }
   end
