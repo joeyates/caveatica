@@ -3,7 +3,7 @@ defmodule Caveatica.SocketClient do
   Connect to caveatica_controller's 'control' socket
   """
 
-  use Slipstream, restart: :temporary
+  use Slipstream, restart: :permanent
 
   require Logger
 
