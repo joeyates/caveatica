@@ -24,6 +24,7 @@ end
 
 config :nerves_ssh, :authorized_keys, Enum.map(keys, &File.read!/1)
 
+config :caveatica, :control_socket, System.fetch_env!("CAVEATICA_CONTROL_SOCKET")
 config :caveatica, :server_fqdn, System.fetch_env!("CAVEATICA_SERVER_FQDN")
 config :caveatica, :server_user, System.fetch_env!("CAVEATICA_SERVER_USER")
 
