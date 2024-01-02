@@ -21,7 +21,7 @@ defmodule Caveatica.MixProject do
 
   def application do
     [
-      extra_applications: [:logger, :ssh],
+      extra_applications: [:inets, :logger, :ssh],
       mod: {Caveatica.App, []}
     ]
   end
@@ -40,6 +40,7 @@ defmodule Caveatica.MixProject do
       {:ring_logger, "~> 0.8.1"},
       {:toolshed, "~> 0.2.13"},
       # Websocket
+      {:jason, ">= 0.0.0"},
       {:slipstream, "~> 1.0"}
     ]
   end
