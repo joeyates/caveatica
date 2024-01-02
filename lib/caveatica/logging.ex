@@ -4,9 +4,7 @@ defmodule Caveatica.Logging do
   def summary(opts \\ []) do
     start = Keyword.get(opts, :start, 0)
     count = Keyword.get(opts, :count)
-    filter = Keyword.get(opts, :filter, false)
     with messages <- messages(start: start),
-         messages <- filter(messages, filter),
          messages <- count(messages, count) do
       messages
       |> Enum.map(&to_s/1)
@@ -47,12 +45,5 @@ defmodule Caveatica.Logging do
     |> Enum.reverse()
     |> Enum.take(count)
     |> Enum.reverse()
-  end
-
-  defp filter(messages, false), do: messages
-
-  defp filter(messages, true) do
-    messages
-    |> Enum.filter(& elem(&1.mfa, 0) == Caveatica.Connection)
   end
 end

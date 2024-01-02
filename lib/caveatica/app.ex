@@ -10,7 +10,6 @@ defmodule Caveatica.App do
     Logger.info "Caveatica.App.start/2"
     children = [
       Picam.Camera,
-      Caveatica.Connection,
       Caveatica.Camera,
       {Caveatica.SocketClient, uri: @control_socket}
     ]
