@@ -79,24 +79,42 @@ defmodule Caveatica.SocketClient do
   @impl Slipstream
   def handle_message(@topic, "close", _message, socket) do
     Logger.info("close")
+    Caveatica.close()
 
     {:ok, socket}
   end
 
   def handle_message(@topic, "nudge_closed", _message, socket) do
     Logger.info("nudge_closed")
+    Caveatica.close(100)
 
     {:ok, socket}
   end
 
   def handle_message(@topic, "nudge_open", _message, socket) do
     Logger.info("nudge_open")
+    Caveatica.open(100)
 
     {:ok, socket}
   end
 
   def handle_message(@topic, "open", _message, socket) do
     Logger.info("open")
+    Caveatica.open()
+
+    {:ok, socket}
+  end
+
+  def handle_message(@topic, "light", %{"state" => "on"}, socket) do
+    Logger.info("light on")
+    Caveatica.light_on()
+
+    {:ok, socket}
+  end
+
+  def handle_message(@topic, "light", %{"state" => "off"}, socket) do
+    Logger.info("light off")
+    Caveatica.light_off()
 
     {:ok, socket}
   end
@@ -105,5 +123,18 @@ defmodule Caveatica.SocketClient do
     Logger.error("Unexpected push from server: #{event} #{inspect(message)}")
 
     {:ok, socket}
+  end
+
+  @impl Slipstream
+  def handle_cast({:upload_image, binary}, socket) do
+    Logger.info("handle_cast upload_image, size: #{byte_size(binary)}")
+    encoded = Base.encode64(binary)
+    push(socket, @topic, "upload_image", %{binary: encoded})
+    {:noreply, socket}
+  end
+
+  def upload_image(binary) do
+    Logger.info("upload_image/1 size: #{byte_size(binary)}")
+    :ok = GenServer.cast(__MODULE__, {:upload_image, binary})
   end
 end

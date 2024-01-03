@@ -68,6 +68,12 @@ bin/burn
 ssh root@nerves.local
 ```
 
+# Deploy to a Running System
+
+```sh
+bin/deploy
+```
+
 # Switching Target
 
 * change MIX_TARGET in .envrc.private
