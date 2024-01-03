@@ -105,6 +105,20 @@ defmodule Caveatica.SocketClient do
     {:ok, socket}
   end
 
+  def handle_message(@topic, "light", %{"state" => "on"}, socket) do
+    Logger.info("light on")
+    Caveatica.light_on()
+
+    {:ok, socket}
+  end
+
+  def handle_message(@topic, "light", %{"state" => "off"}, socket) do
+    Logger.info("light off")
+    Caveatica.light_off()
+
+    {:ok, socket}
+  end
+
   def handle_message(@topic, event, message, socket) do
     Logger.error("Unexpected push from server: #{event} #{inspect(message)}")
 
