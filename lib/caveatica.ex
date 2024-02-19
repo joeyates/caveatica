@@ -5,15 +5,16 @@ defmodule Caveatica do
   @open_pin 17 # GPIO17 == pin 11
   @close_pin 18 # GPIO18 == pin 12
   @light_pin 23 # GPIO23 == pin 16
-  @duration 3000 # milliseconds
+  @close_duration 6500 # milliseconds
+  @open_duration 7350 # milliseconds
 
-  def open(duration \\ @duration) do
+  def open(duration \\ @open_duration) do
     start_raising()
     :timer.sleep(duration)
     stop_raising()
   end
 
-  def close(duration \\ @duration) do
+  def close(duration \\ @close_duration) do
     start_lowering()
     :timer.sleep(duration)
     stop_lowering()
