@@ -78,28 +78,28 @@ defmodule Caveatica.SocketClient do
 
   @impl Slipstream
   def handle_message(@topic, "close", _message, socket) do
-    Logger.info("close")
+    Logger.info("SocketClient.handle_message close")
     Caveatica.close()
 
     {:ok, socket}
   end
 
   def handle_message(@topic, "nudge_closed", _message, socket) do
-    Logger.info("nudge_closed")
+    Logger.info("SocketClient.handle_message nudge_closed")
     Caveatica.close(100)
 
     {:ok, socket}
   end
 
   def handle_message(@topic, "nudge_open", _message, socket) do
-    Logger.info("nudge_open")
+    Logger.info("SocketClient.handle_message nudge_open")
     Caveatica.open(100)
 
     {:ok, socket}
   end
 
   def handle_message(@topic, "open", _message, socket) do
-    Logger.info("open")
+    Logger.info("SocketClient.handle_message open")
     Caveatica.open()
 
     {:ok, socket}
