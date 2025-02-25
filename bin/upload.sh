@@ -84,6 +84,7 @@ FIRMWARE_PLATFORM=$(echo "$FIRMWARE_METADATA" | grep -E "^meta-platform=" -m 1 2
 FIRMWARE_UUID=$(echo "$FIRMWARE_METADATA" | grep -E "^meta-uuid=" -m 1 2>/dev/null | cut -d '=' -f 2- | tr -d '"')
 
 echo "Path: $FILENAME"
+echo "Size: $(du -h $FILENAME | cut -f1) bytes"
 echo "Product: $FIRMWARE_PRODUCT $FIRMWARE_VERSION"
 echo "UUID: $FIRMWARE_UUID"
 echo "Platform: $FIRMWARE_PLATFORM"
