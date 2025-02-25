@@ -4,6 +4,7 @@ defmodule Caveatica.Logging do
   def summary(opts \\ []) do
     start = Keyword.get(opts, :start, 0)
     count = Keyword.get(opts, :count)
+
     with messages <- messages(start: start),
          messages <- count(messages, count) do
       messages
@@ -13,10 +14,11 @@ defmodule Caveatica.Logging do
 
   def messages(opts \\ []) do
     start = Keyword.get(opts, :start, 0)
+
     start
     |> RingLogger.get()
     |> Enum.map(fn {_level, {Logger, message, time, info}} -> {message, time, info} end)
-    |> Enum.filter(& elem(&1, 2)[:application] == :caveatica)
+    |> Enum.filter(&(elem(&1, 2)[:application] == :caveatica))
     |> Enum.map(fn {message, time, info} ->
       %__MODULE__{
         index: info[:index],
@@ -40,6 +42,7 @@ defmodule Caveatica.Logging do
   end
 
   defp count(messages, nil), do: messages
+
   defp count(messages, count) do
     messages
     |> Enum.reverse()

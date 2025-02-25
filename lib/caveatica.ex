@@ -2,11 +2,12 @@ defmodule Caveatica do
   @moduledoc """
   Documentation for `Caveatica`.
   """
-  @open_pin 17 # GPIO17 == pin 11
-  @close_pin 18 # GPIO18 == pin 12
-  @light_pin 23 # GPIO23 == pin 16
-  @close_duration 6500 # milliseconds
-  @open_duration 7350 # milliseconds
+  # GPIO17 == pin 11
+  @open_pin 17
+  # GPIO18 == pin 12
+  @close_pin 18
+  # GPIO23 == pin 16
+  @light_pin 23
 
   def open(duration \\ @open_duration) do
     start_raising()
