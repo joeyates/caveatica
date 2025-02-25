@@ -9,13 +9,13 @@ defmodule Caveatica do
   # GPIO23 == pin 16
   @light_pin 23
 
-  def open(duration \\ @open_duration) do
+  def open(duration) do
     start_raising()
     :timer.sleep(duration)
     stop_raising()
   end
 
-  def close(duration \\ @close_duration) do
+  def close(duration) do
     start_lowering()
     :timer.sleep(duration)
     stop_lowering()
