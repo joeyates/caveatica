@@ -1,7 +1,8 @@
 defmodule Caveatica.Light do
   require Logger
 
-  @pin 23 # GPIO23 == pin 16
+  # GPIO23 == pin 16
+  @pin 23
 
   def on do
     {:ok, gpio} = Circuits.GPIO.open(@pin, :output)

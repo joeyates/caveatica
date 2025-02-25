@@ -8,7 +8,8 @@ defmodule Caveatica.App do
   IO.puts("control_socket: #{@control_socket}")
 
   def start(_type, _args) do
-    Logger.info "Caveatica.App.start/2"
+    Logger.info("Caveatica.App.start/2")
+
     children = [
       Picam.Camera,
       Caveatica.Camera,

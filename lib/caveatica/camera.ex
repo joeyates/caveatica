@@ -3,16 +3,17 @@ defmodule Caveatica.Camera do
   require Logger
 
   @name :camera
-  @photo_interval 1000 # ms
+  # ms
+  @photo_interval 1000
 
   def start_link(_opts) do
-    Logger.info "Caveatica.Camera.start_link/1"
+    Logger.info("Caveatica.Camera.start_link/1")
     GenServer.start_link(__MODULE__, %{}, name: @name)
   end
 
   @impl true
   def init(_opts) do
-    Logger.info "Caveatica.Camera.init/1"
+    Logger.info("Caveatica.Camera.init/1")
 
     Process.send_after(self(), :upload_photo, @photo_interval)
 
@@ -29,7 +30,7 @@ defmodule Caveatica.Camera do
   end
 
   defp upload_photo do
-    Logger.info "Caveatica.Camera uploading photo`"
+    Logger.info("Caveatica.Camera uploading photo`")
     binary = Picam.next_frame()
     Caveatica.SocketClient.upload_image(binary)
   end

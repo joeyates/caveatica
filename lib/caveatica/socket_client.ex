@@ -8,7 +8,8 @@ defmodule Caveatica.SocketClient do
   require Logger
 
   @topic "control"
-  @request_interval 10_000 # ms
+  # ms
+  @request_interval 10_000
 
   def start_link(args) do
     Slipstream.start_link(__MODULE__, args, name: __MODULE__)
@@ -27,6 +28,7 @@ defmodule Caveatica.SocketClient do
   def handle_connect(socket) do
     Logger.info("handle_connect")
     timer = :timer.send_interval(@request_interval, self(), :request_metrics)
+
     {
       :ok,
       socket
@@ -46,7 +48,9 @@ defmodule Caveatica.SocketClient do
     end
 
     case reconnect(socket) do
-      {:ok, socket} -> {:ok, socket}
+      {:ok, socket} ->
+        {:ok, socket}
+
       {:error, reason} ->
         Logger.info("reconnect failed: #{inspect(reason)}")
         {:stop, reason, socket}

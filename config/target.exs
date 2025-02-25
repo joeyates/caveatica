@@ -62,7 +62,8 @@ wlan0_config =
   end
 
 config :vintage_net,
-  regulatory_domain: "IT", # TODO
+  # TODO
+  regulatory_domain: "IT",
   config: [
     {"usb0", %{type: VintageNetDirect}},
     {"eth0",
