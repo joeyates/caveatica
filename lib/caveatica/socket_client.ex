@@ -69,7 +69,6 @@ defmodule Caveatica.SocketClient do
 
   @impl Slipstream
   def handle_info(:send_status, socket) do
-    Logger.debug("Sending status")
     light_status = Caveatica.Light.status()
     {:ok, _ref} = push(socket, @topic, "status", %{light: light_status}, :infinity)
 
