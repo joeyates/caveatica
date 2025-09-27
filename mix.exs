@@ -37,7 +37,7 @@ defmodule Caveatica.MixProject do
       {:nerves_system_rpi3, "~> 1.25", runtime: false, targets: :rpi3},
       {:nerves_system_rpi4, "~> 1.25", runtime: false, targets: :rpi4},
       # GPIO
-      {:circuits_gpio, "~> 1.0"},
+      {:circuits_gpio, "~> 2.1.3"},
       # Camera
       {:picam, "~> 0.4.1"},
       # Logging
