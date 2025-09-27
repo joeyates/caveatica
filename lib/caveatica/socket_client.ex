@@ -71,7 +71,7 @@ defmodule Caveatica.SocketClient do
   def handle_info(:send_status, socket) do
     Logger.debug("Sending status")
     light_status = Caveatica.Light.status()
-    {:ok, _ref} = push(socket, @topic, "status", %{light: light_status})
+    {:ok, _ref} = push(socket, @topic, "status", %{light: light_status}, :infinity)
 
     {:noreply, socket}
   end
@@ -115,7 +115,7 @@ defmodule Caveatica.SocketClient do
   def handle_cast({:upload_image, binary}, socket) do
     Logger.debug("handle_cast upload_image, size: #{byte_size(binary)}")
     encoded = Base.encode64(binary)
-    push(socket, @topic, "upload_image", %{binary: encoded})
+    push(socket, @topic, "upload_image", %{binary: encoded}, :infinity)
     {:noreply, socket}
   end
 
