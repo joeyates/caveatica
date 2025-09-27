@@ -12,6 +12,7 @@ defmodule Caveatica.App do
     children = [
       Picam.Camera,
       Caveatica.Camera,
+      Caveatica.Light,
       {Caveatica.SocketClient, uri: @control_socket}
     ]
 

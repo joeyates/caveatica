@@ -1,28 +1,52 @@
 defmodule Caveatica.Light do
   @moduledoc false
 
+  use GenServer
+
+  import GenServer, only: [call: 2]
+
+  alias Circuits.GPIO
+
   require Logger
 
   @light_label "GPIO23"
 
+  def start_link(_opts) do
+    Logger.info("Caveatica.Light.start_link/1")
+    GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
+  end
+
+  @impl true
+  def init(_) do
+    Logger.info("Light init")
+    :ok = GPIO.write_one(@light_label, 0)
+    {:ok, %{status: :off}}
+  end
+
+  @impl true
+  def handle_call(:status, _from, state) do
+    {:reply, state.status, state}
+  end
+
+  def handle_call(:turn_on, _from, state) do
+    :ok = GPIO.write_one(@light_label, 1)
+    {:reply, :ok, %{state | status: :on}}
+  end
+
+  def handle_call(:turn_off, _from, state) do
+    :ok = GPIO.write_one(@light_label, 0)
+    {:reply, :ok, %{state | status: :off}}
+  end
+
   def turn_on() do
-    {:ok, gpio} = Circuits.GPIO.open(@light_label, :output)
-    Circuits.GPIO.write(@light_label, 1)
-    Circuits.GPIO.close(gpio)
+    call(__MODULE__, :turn_on)
   end
 
   def turn_off() do
-    {:ok, gpio} = Circuits.GPIO.open(@light_label, :output)
-    Circuits.GPIO.write(gpio, 0)
-    Circuits.GPIO.close(gpio)
+    call(__MODULE__, :turn_off)
   end
 
   def status() do
-    {:ok, gpio} = Circuits.GPIO.open(@light_label, :input)
-    value = Circuits.GPIO.read(gpio)
-    Logger.info("light pin value: #{inspect(value)}")
-    Circuits.GPIO.close(gpio)
-
-    "foo"
+    call(__MODULE__, :status)
   end
 end
