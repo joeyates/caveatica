@@ -8,8 +8,7 @@ defmodule Caveatica.SocketClient do
   require Logger
 
   @topic "control"
-  # ms
-  @request_interval 10_000
+  @status_interval _three_seconds = 3_000
 
   def start_link(args) do
     Slipstream.start_link(__MODULE__, args, name: __MODULE__)
@@ -28,12 +27,12 @@ defmodule Caveatica.SocketClient do
   @impl Slipstream
   def handle_connect(socket) do
     Logger.info("#{__MODULE__}.handle_connect")
-    timer = :timer.send_interval(@request_interval, self(), :request_metrics)
+    status_timer = :timer.send_interval(@status_interval, self(), :send_status)
 
     {
       :ok,
       socket
-      |> assign(:ping_timer, timer)
+      |> assign(:status_timer, status_timer)
       |> join(@topic)
     }
   end
@@ -42,11 +41,15 @@ defmodule Caveatica.SocketClient do
   def handle_disconnect(reason, socket) do
     Logger.info("__MODULE__.handle_disconnect: #{inspect(reason)}")
 
-    ping_timer = socket.assigns[:ping_timer]
+    status_timer = socket.assigns[:status_timer]
 
-    if ping_timer do
-      :timer.cancel(ping_timer)
-    end
+    socket =
+      if status_timer do
+        :timer.cancel(status_timer)
+        assign(socket, :status_timer, nil)
+      else
+        socket
+      end
 
     case reconnect(socket) do
       {:ok, socket} ->
@@ -65,20 +68,12 @@ defmodule Caveatica.SocketClient do
   end
 
   @impl Slipstream
-  def handle_info(:request_metrics, socket) do
-    Logger.debug("Requesting metrics")
-    {:ok, ref} = push(socket, @topic, "get_metrics", %{format: "json"})
+  def handle_info(:send_status, socket) do
+    Logger.debug("Sending status")
+    status = nil
+    {:ok, _ref} = push(socket, @topic, "status", %{status: status})
 
-    {:noreply, assign(socket, :metrics_request, ref)}
-  end
-
-  @impl Slipstream
-  def handle_reply(ref, metrics, socket) do
-    if ref == socket.assigns.metrics_request do
-      Logger.debug("Got metrics #{inspect(metrics)}")
-    end
-
-    {:ok, socket}
+    {:noreply, socket}
   end
 
   @impl Slipstream
