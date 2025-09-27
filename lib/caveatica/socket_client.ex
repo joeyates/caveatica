@@ -8,7 +8,7 @@ defmodule Caveatica.SocketClient do
   require Logger
 
   @topic "control"
-  @status_interval _three_seconds = 3_000
+  @status_interval _half_a_second = 500
 
   def start_link(args) do
     Slipstream.start_link(__MODULE__, args, name: __MODULE__)
