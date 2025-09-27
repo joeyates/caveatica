@@ -93,14 +93,14 @@ defmodule Caveatica.SocketClient do
 
   def handle_message(@topic, "light", %{"state" => "on"}, socket) do
     Logger.debug("light on")
-    Caveatica.light_on()
+    Caveatica.Light.turn_on()
 
     {:ok, socket}
   end
 
   def handle_message(@topic, "light", %{"state" => "off"}, socket) do
     Logger.debug("light off")
-    Caveatica.light_off()
+    Caveatica.Light.turn_off()
 
     {:ok, socket}
   end

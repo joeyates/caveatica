@@ -6,8 +6,6 @@ defmodule Caveatica do
   @open_pin 17
   # GPIO18 == pin 12
   @close_pin 18
-  # GPIO23 == pin 16
-  @light_pin 23
 
   def open(duration) do
     start_raising()
@@ -19,18 +17,6 @@ defmodule Caveatica do
     start_lowering()
     :timer.sleep(duration)
     stop_lowering()
-  end
-
-  def light_on do
-    {:ok, gpio} = Circuits.GPIO.open(@light_pin, :output)
-    Circuits.GPIO.write(gpio, 1)
-    Circuits.GPIO.close(gpio)
-  end
-
-  def light_off do
-    {:ok, gpio} = Circuits.GPIO.open(@light_pin, :output)
-    Circuits.GPIO.write(gpio, 0)
-    Circuits.GPIO.close(gpio)
   end
 
   defp start_raising do
