@@ -39,7 +39,7 @@ defmodule Caveatica.SocketClient do
 
   @impl Slipstream
   def handle_disconnect(reason, socket) do
-    Logger.info("__MODULE__.handle_disconnect: #{inspect(reason)}")
+    Logger.info("#{__MODULE__}.handle_disconnect: #{inspect(reason)}")
 
     status_timer = socket.assigns[:status_timer]
 
@@ -112,14 +112,13 @@ defmodule Caveatica.SocketClient do
 
   @impl Slipstream
   def handle_cast({:upload_image, binary}, socket) do
-    Logger.debug("handle_cast upload_image, size: #{byte_size(binary)}")
+    Logger.debug("#{__MODULE__}.handle_cast upload_image, size: #{byte_size(binary)}")
     encoded = Base.encode64(binary)
     push(socket, @topic, "upload_image", %{binary: encoded}, :infinity)
     {:noreply, socket}
   end
 
   def upload_image(binary) do
-    Logger.debug("upload_image/1 size: #{byte_size(binary)}")
     :ok = GenServer.cast(__MODULE__, {:upload_image, binary})
   end
 end
