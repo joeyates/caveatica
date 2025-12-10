@@ -24,7 +24,21 @@ end
 
 config :nerves_ssh, :authorized_keys, Enum.map(keys, &File.read!/1)
 
+basic_auth_id = System.get_env("CAVEATICA_BASIC_AUTH_ID")
+basic_auth_password = System.get_env("CAVEATICA_BASIC_AUTH_PASSWORD")
+
+socket_headers =
+  if basic_auth_id && basic_auth_password do
+    encoded =
+      Base.encode64("#{basic_auth_id}:#{basic_auth_password}", padding: false)
+
+    [{"authorization", "Basic #{encoded}"}]
+  else
+    []
+  end
+
 config :caveatica, :control_socket, System.fetch_env!("CAVEATICA_CONTROL_SOCKET")
+config :caveatica, :socket_headers, socket_headers
 
 wlan0_config =
   case {System.get_env("WIFI_SSID"), System.get_env("WIFI_PASSPHRASE")} do
