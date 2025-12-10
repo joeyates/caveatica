@@ -16,10 +16,10 @@ defmodule Caveatica.SocketClient do
 
   @impl Slipstream
   def init(config) do
-    Logger.info("Initializing socket")
-    Logger.debug("config: #{inspect(config)}")
+    Logger.info("#{__MODULE__}.init Initializing socket")
+    Logger.debug("#{__MODULE__}.init, config: #{inspect(config)}")
     result = connect(config)
-    Logger.debug("Socket connect/1 result: #{inspect(result)}")
+    Logger.debug("#{__MODULE__}.init, Socket connect/1 result: #{inspect(result)}")
     {:ok, socket} = result
     {:ok, socket}
   end
